@@ -4,6 +4,8 @@ const express = require('express')
 const helmet = require('helmet')
 const cors = require('cors')
 
+const bookingRoutes = require ('./routes/bookings.routes') 
+
 const app = express()
 
 // Registers global middleware (cors, helmet, json parsing)
@@ -22,6 +24,9 @@ app.get('/', (req, res) => {
     message: 'Hello from Your Place!',
   })
 })
+
+//API Routes
+app.use('/bookings', bookingRoutes)
 
 // If a route/path is requested that doesn't exist
 app.all(/.*/, (req, res) => {
