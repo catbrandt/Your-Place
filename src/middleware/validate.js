@@ -1,4 +1,4 @@
-import ApiError from "../utils/ApiError.js";
+const ApiError = require("../utils/ApiError");
 
 /**
  * validate(schema, location)
@@ -17,4 +17,4 @@ function validate(schema, location = "body") {
   };
 }
 
-export default validate;
+module.exports = validate;

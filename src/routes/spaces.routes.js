@@ -1,11 +1,11 @@
-import { Router } from "express";
-import requireAuth from "../middleware/requireAuth.js";
-import requireRole from "../middleware/requireRole.js";
-import validate from "../middleware/validate.js";
-import { createSpaceSchema, updateSpaceSchema, idParamSchema } from "../services/spaces.service.js";
-import * as controller from "../controllers/spaces.controller.js";
+const express = require("express");
+const requireAuth = require("../middleware/requireAuth");
+const requireRole = require("../middleware/requireRole");
+const validate = require("../middleware/validate");
+const { createSpaceSchema, updateSpaceSchema, idParamSchema } = require("../services/spaces.service");
+const controller = require("../controllers/spaces.controller");
 
-const router = Router();
+const router = express.Router();
 
 router.get("/", controller.listSpaces);
 router.get("/:id", validate(idParamSchema, "params"), controller.getSpaceById);
@@ -35,4 +35,4 @@ router.delete(
   controller.deleteSpace
 );
 
-export default router;
+module.exports = router;

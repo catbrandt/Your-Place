@@ -1,6 +1,6 @@
-import { z } from "zod";
-import ApiError from "../utils/ApiError.js";
-import * as model from "../models/spaces.model.js";
+const { z } = require("zod");
+const ApiError = require("../utils/ApiError");
+const model = require("../models/spaces.model");
 
 const idParamSchema = z.object({
   id: z.coerce.number().int().positive(),
@@ -50,4 +50,4 @@ async function deleteSpace(hostUserId, spaceId) {
   await model.deleteSpace(spaceId);
 }
 
-export { idParamSchema, createSpaceSchema, updateSpaceSchema, listSpaces, getSpaceById, createSpace, updateSpace, deleteSpace };
+module.exports = { idParamSchema, createSpaceSchema, updateSpaceSchema, listSpaces, getSpaceById, createSpace, updateSpace, deleteSpace };

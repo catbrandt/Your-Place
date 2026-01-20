@@ -1,4 +1,4 @@
-import * as service from "../services/spaces.service.js";
+const service = require("../services/spaces.service");
 
 async function listSpaces(req, res, next) {
   try {
@@ -45,4 +45,4 @@ async function deleteSpace(req, res, next) {
   }
 }
 
-export { listSpaces, getSpaceById, createSpace, updateSpace, deleteSpace };
+module.exports = { listSpaces, getSpaceById, createSpace, updateSpace, deleteSpace };

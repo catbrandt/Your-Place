@@ -1,7 +1,7 @@
-import express from "express";
-import spacesRoutes from "./routes/spaces.routes.js";
-import eventsRoutes from "./routes/events.routes.js";
-import errorHandler from "./middleware/errorHandler.js";
+const express = require("express");
+const spacesRoutes = require("./routes/spaces.routes");
+const eventsRoutes = require("./routes/events.routes");
+const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
 
@@ -14,4 +14,4 @@ app.use("/events", eventsRoutes);
 
 app.use(errorHandler);
 
-export default app;
+module.exports = app;

@@ -1,4 +1,4 @@
-import ApiError from "../utils/ApiError.js";
+const ApiError = require("../utils/ApiError");
 
 function requireRole(role) {
   return (req, res, next) => {
@@ -10,4 +10,4 @@ function requireRole(role) {
   };
 }
 
-export default requireRole;
+module.exports = requireRole;

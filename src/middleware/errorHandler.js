@@ -1,4 +1,4 @@
-import ApiError from "../utils/ApiError.js";
+const ApiError = require("../utils/ApiError");
 
 function errorHandler(err, req, res, next) {
   // eslint-disable-line no-unused-vars
@@ -25,4 +25,4 @@ function errorHandler(err, req, res, next) {
   });
 }
 
-export default errorHandler;
+module.exports = errorHandler;

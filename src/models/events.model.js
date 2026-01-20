@@ -1,4 +1,4 @@
-import { query } from "../db/pool.js";
+const { query } = require("../db/pool");
 
 async function listEvents(filters = {}) {
   const where = [];
@@ -96,4 +96,4 @@ async function deleteEvent(eventId) {
   await query(`DELETE FROM events WHERE id = $1`, [eventId]);
 }
 
-export { listEvents, getEventById, createEvent, updateEvent, deleteEvent };
+module.exports = { listEvents, getEventById, createEvent, updateEvent, deleteEvent };

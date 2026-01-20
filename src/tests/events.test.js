@@ -1,6 +1,6 @@
-import request from "supertest";
-import app from "../app.js";
-import { query } from "../db/pool.js";
+const request = require("supertest");
+const app = require("../app");
+const { query } = require("../db/pool");
 
 async function seedSpace({ hostUserId = 1, name = "Test Space", city = "Sydney" } = {}) {
   const { rows } = await query(

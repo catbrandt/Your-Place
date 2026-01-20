@@ -1,4 +1,4 @@
-import * as service from "../services/events.service.js";
+const service = require("../services/events.service");
 
 async function listEvents(req, res, next) {
   try {
@@ -45,4 +45,4 @@ async function deleteEvent(req, res, next) {
   }
 }
 
-export { listEvents, getEventById, createEvent, updateEvent, deleteEvent };
+module.exports = { listEvents, getEventById, createEvent, updateEvent, deleteEvent };

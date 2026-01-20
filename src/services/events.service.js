@@ -1,7 +1,7 @@
-import { z } from "zod";
-import ApiError from "../utils/ApiError.js";
-import * as model from "../models/events.model.js";
-import * as spacesModel from "../models/spaces.model.js";
+const { z } = require("zod");
+const ApiError = require("../utils/ApiError");
+const model = require("../models/events.model");
+const spacesModel = require("../models/spaces.model");
 
 const idParamSchema = z.object({
   id: z.coerce.number().int().positive(),
@@ -97,4 +97,4 @@ async function deleteEvent(hostUserId, eventId) {
   await model.deleteEvent(eventId);
 }
 
-export { idParamSchema, listQuerySchema, createEventSchema, updateEventSchema, listEvents, getEventById, createEvent, updateEvent, deleteEvent };
+module.exports = { idParamSchema, listQuerySchema, createEventSchema, updateEventSchema, listEvents, getEventById, createEvent, updateEvent, deleteEvent };

@@ -1,11 +1,11 @@
-import { Router } from "express";
-import requireAuth from "../middleware/requireAuth.js";
-import requireRole from "../middleware/requireRole.js";
-import validate from "../middleware/validate.js";
-import { createEventSchema, updateEventSchema, idParamSchema, listQuerySchema } from "../services/events.service.js";
-import * as controller from "../controllers/events.controller.js";
+const express = require("express");
+const requireAuth = require("../middleware/requireAuth");
+const requireRole = require("../middleware/requireRole");
+const validate = require("../middleware/validate");
+const { createEventSchema, updateEventSchema, idParamSchema, listQuerySchema } = require("../services/events.service");
+const controller = require("../controllers/events.controller");
 
-const router = Router();
+const router = express.Router();
 
 router.get("/", validate(listQuerySchema, "query"), controller.listEvents);
 router.get("/:id", validate(idParamSchema, "params"), controller.getEventById);
@@ -35,4 +35,4 @@ router.delete(
   controller.deleteEvent
 );
 
-export default router;
+module.exports = router;

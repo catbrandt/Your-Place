@@ -1,4 +1,4 @@
-import { query } from "../db/pool.js";
+const { query } = require("../db/pool");
 
 /**
  * These tests assume:
@@ -34,8 +34,11 @@ beforeEach(async () => {
 
 afterAll(async () => {
   // Close pool cleanly so Jest exits
-  const { default: pkg } = await import("pg");
+  const pool = require("../db/pool").default;
   // If your pool.js exports pool/end, use that instead.
   // This is a safe fallback if you do not export pool directly.
   // If Jest hangs, you should export pool.end() from pool.js and call it here.
+  if (pool && pool.end) {
+    await pool.end();
+  }
 });

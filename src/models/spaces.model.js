@@ -1,4 +1,4 @@
-import { query } from "../db/pool.js";
+const { query } = require("../db/pool");
 
 async function listSpaces() {
   const { rows } = await query(
@@ -58,4 +58,4 @@ async function deleteSpace(spaceId) {
   await query(`DELETE FROM spaces WHERE id = $1`, [spaceId]);
 }
 
-export { listSpaces, getSpaceById, createSpace, updateSpace, deleteSpace };
+module.exports = { listSpaces, getSpaceById, createSpace, updateSpace, deleteSpace };
