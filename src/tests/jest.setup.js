@@ -13,9 +13,9 @@ async function ensureUser1() {
   // If your users table has different columns, adjust minimally.
   // The only hard requirement is that users(id=1) exists.
   await query(
-    `INSERT INTO users (id)
-     VALUES (1)
-     ON CONFLICT (id) DO NOTHING`,
+    `INSERT INTO users (id, email, password_hash, role)
+     VALUES (1, 'test@example.com', 'dummy_hash', 'host')
+     ON CONFLICT (id) DO UPDATE SET email = EXCLUDED.email, role = EXCLUDED.role`,
     []
   );
 }
@@ -34,7 +34,7 @@ beforeEach(async () => {
 
 afterAll(async () => {
   // Close pool cleanly so Jest exits
-  const pool = require("../db/pool").default;
+  const { pool } = require("../db/pool");
   // If your pool.js exports pool/end, use that instead.
   // This is a safe fallback if you do not export pool directly.
   // If Jest hangs, you should export pool.end() from pool.js and call it here.
