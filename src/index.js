@@ -5,7 +5,7 @@ const helmet = require('helmet')
 
 const cors = require('cors')
 
-const bookingRoutes = require ('./routes/bookings.routes') 
+const bookingRoutes = require('./routes/bookings.routes')
 
 const app = express()
 
@@ -31,7 +31,7 @@ app.get('/', (req, res) => {
   })
 })
 
-//API Routes
+// API Routes
 app.use('/bookings', bookingRoutes)
 
 // If a route/path is requested that doesn't exist

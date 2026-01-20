@@ -1,4 +1,4 @@
-const db = require('../db/pool.js')
+const db = require('../db/pool')
 
 /**
  * Create a new booking for an event/space
@@ -20,7 +20,7 @@ const createBooking = async (eventId, spaceId, userId, quantity, totalPrice, pay
     `INSERT INTO bookings (event_id, space_id, user_id, quantity, total_price, payment_status) 
      VALUES ($1, $2, $3, $4, $5, $6) 
      RETURNING *`,
-    [eventId, spaceId, userId, quantity, totalPrice, paymentStatus || 'pending'],
+    [eventId, spaceId, userId, quantity, totalPrice, paymentStatus || 'pending']
   )
   return result.rows[0]
 }
@@ -30,18 +30,18 @@ const createBooking = async (eventId, spaceId, userId, quantity, totalPrice, pay
  * @returns Array of all bookings by ID
  */
 const getAllBookings = async () => {
-    const result = await db.query('SELECT * FROM bookings ORDER BY id')
-    return result.rows
+  const result = await db.query('SELECT * FROM bookings ORDER BY id')
+  return result.rows
 }
 
 /**
  * Get a single booking by its ID
- * @param {number} bookingID 
+ * @param {number} bookingID
  * @returns {object} the booking object, undefined if none found
  */
 const getBookingById = async (id) => {
-    const result = await db.query('SELECT * FROM bookings WHERE id = $1', [id])
-    return result.rows[0]
+  const result = await db.query('SELECT * FROM bookings WHERE id = $1', [id])
+  return result.rows[0]
 }
 
 /**
@@ -64,7 +64,7 @@ const getBookingsByUserId = async (userId) => {
         LEFT JOIN spaces s ON b.space_id = s.id
         WHERE b.user_id = $1 
         ORDER BY COALESCE(e.start_at, b.id) DESC`,
-        [userId],
+    [userId]
   )
   return result.rows
 }
@@ -75,15 +75,15 @@ const getBookingsByUserId = async (userId) => {
  * @returns {array} Bookings for event with user details
  */
 const getBookingsByEventId = async (eventId) => {
-    const result = await db.query(
-        `SELECT b.*, u.full_name, u.email
+  const result = await db.query(
+    `SELECT b.*, u.full_name, u.email
         FROM bookings b
         JOIN users u ON b.user_id = u.id
         WHERE b.event_id = $1
         ORDER BY b.id`,
-        [eventId]
-    )
-    return result.rows
+    [eventId]
+  )
+  return result.rows
 }
 
 /**
@@ -92,15 +92,15 @@ const getBookingsByEventId = async (eventId) => {
  * @returns {array} Bookings for space with user details
  */
 const getBookingsBySpaceId = async (spaceId) => {
-    const result = await db.query(
-        `SELECT b.*, u.full_name, u.email
+  const result = await db.query(
+    `SELECT b.*, u.full_name, u.email
         FROM bookings b
         JOIN users u ON b.user_id = u.id
         WHERE b.event_id = $1
         ORDER BY b.id`,
-        [spaceId]
-    )
-    return result.rows
+    [spaceId]
+  )
+  return result.rows
 }
 
 /**
@@ -110,14 +110,14 @@ const getBookingsBySpaceId = async (spaceId) => {
  * @returns {object} Updated booking, undefined if not found
  */
 const updateBooking = async (id, quantity, totalPrice, paymentStatus) => {
-    const result = await db.query(
-        `UPDATE bookings
+  const result = await db.query(
+    `UPDATE bookings
         SET quantity = $1, total_price = $2, payment_status = $3
         WHERE id = $4
         RETURNING *`,
-        [quantity, totalPrice, paymentStatus, id]
-    )
-    return result.rows[0]
+    [quantity, totalPrice, paymentStatus, id]
+  )
+  return result.rows[0]
 }
 
 /**
@@ -126,22 +126,22 @@ const updateBooking = async (id, quantity, totalPrice, paymentStatus) => {
  * @returns {object} Deleted booking, undefined if not found
  */
 const deleteBooking = async (id) => {
-    const result = await db.query(
-        `DELETE FROM bookings
+  const result = await db.query(
+    `DELETE FROM bookings
         WHERE id = $1
         RETURNING *`,
-        [id]
-    )
-    return result.rows[0]
+    [id]
+  )
+  return result.rows[0]
 }
 
 module.exports = {
-    createBooking,
-    getAllBookings,
-    getBookingById,
-    getBookingsByUserId,
-    getBookingsByEventId,
-    getBookingsBySpaceId,
-    updateBooking,
-    deleteBooking,
+  createBooking,
+  getAllBookings,
+  getBookingById,
+  getBookingsByUserId,
+  getBookingsByEventId,
+  getBookingsBySpaceId,
+  updateBooking,
+  deleteBooking,
 }

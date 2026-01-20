@@ -18,4 +18,5 @@ Creating Your Place, a website that allows users to host rooms and events and co
 - Users can book in to spaces and events
 
 # CONTRIBUTORS
+
 - [Cat Brandt](https://github.com/catbrandt)
