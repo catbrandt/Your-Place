@@ -1,4 +1,4 @@
-const { findUserByEmail, createUser } = require('../models/User')
+const { findUserByEmail, createUser } = require('../models/users.model')
 const { hashPassword, verifyPassword, createToken } = require('../services/auth.service')
 
 /**
