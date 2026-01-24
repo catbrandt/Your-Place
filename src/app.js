@@ -7,7 +7,6 @@ const authRoutes = require('./routes/auth.routes')
 const bookingsRoutes = require('./routes/bookings.routes')
 const spacesRoutes = require('./routes/spaces.routes')
 const eventsRoutes = require('./routes/events.routes')
-const usersRoutes = require('./routes/users.routes')
 
 const ApiError = require('./utils/ApiError')
 const errorHandler = require('./middleware/errorHandler')
@@ -25,7 +24,6 @@ app.use('/users', usersRoutes)
 app.use('/bookings', bookingsRoutes)
 app.use('/spaces', spacesRoutes)
 app.use('/events', eventsRoutes)
-app.use('/users', usersRoutes)
 
 app.use((req, res, next) => {
   next(new ApiError(404, 'NOT_FOUND', 'Route not found'))
