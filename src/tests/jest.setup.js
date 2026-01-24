@@ -20,8 +20,19 @@ async function ensureUser1() {
   );
 }
 
+async function ensureUser2() {
+  // Create user 2 for tests that need a different user
+  await query(
+    `INSERT INTO users (id, email, password_hash, role)
+     VALUES (2, 'test2@example.com', 'dummy_hash', 'host')
+     ON CONFLICT (id) DO UPDATE SET email = EXCLUDED.email, role = EXCLUDED.role`,
+    []
+  );
+}
+
 beforeAll(async () => {
   await ensureUser1();
+  await ensureUser2();
 });
 
 beforeEach(async () => {
@@ -30,6 +41,7 @@ beforeEach(async () => {
   await query("DELETE FROM spaces", []);
   // Keep users
   await ensureUser1();
+  await ensureUser2();
 });
 
 afterAll(async () => {
