@@ -6,7 +6,7 @@
 
 ---
 
-Your Place is a backend API (front-end integration and website deployment coming soon!) that supports a platform where hosts can offer spaces and events, allowing users to book those spaces and experiences. The system is designed with two primary user roles - hosts and users - each with distinct capabilities, enforced via authentication and authorisation rules.
+Your Place is a backend API (front-end integration and website deployment coming soon!) that supports a platform where hosts can offer spaces and events, allowing users to book those spaces and experiences. The system is designed with three primary user roles - hosts, users and administrators - each with distinct capabilities, enforced via authentication and authorisation rules.
 
 Hosts can create, update, and delete listings for spaces and events, providing data such as location, capacity, category, pricing and schedule. Categories including 'Create', 'Move', 'Celebrate', 'Learn' and 'Relax' enable organised filtering of current offerings, allowing users to easily discover spaces and events that align with their personal interests.
 
@@ -16,7 +16,7 @@ The platform is inspired by services such as Airbnb, where hosts offer spaces fo
 
 ## Problem & Solution
 
-There is a need for a platform that enables users to connect through shared spaces and experiences. Some people want t ohost spcaes or events to engage with others who share similar interests, or as an income stream, whist others want to book spaces for individual use, group activities, or personal expereinces.
+There is a need for a platform that enables users to connect through shared spaces and experiences. Some people want to host spaces or events to engage with others who share similar interests, or as an income stream, whist others want to book spaces for individual use, group activities, or personal expereinces.
 
 Current platforms or communities often do not provide a unified API driven backend that supports flexible hosting, event/space management, and secure booking. You Place addresses ths by offering an API that manages users, hosts, spaces, events and bookings in a structured and scalabele way.
 
@@ -30,10 +30,11 @@ Current platforms or communities often do not provide a unified API driven backe
 ## Minimum Viable Product MVP Features
 
 - User registration and login (Authentication)
-- Role based authorisation (Host vs User)
+- Role based authorisation (Host, User, Admin)
 - CRUD Operations for tasks (Create, Read, Update, Delete)
+- Admin-controlled user role management
 - Separate development and test environments
-- Automated test suite for functionality
+- Automated test suite for functionality and access control
 
 ---
 
@@ -163,6 +164,11 @@ See each package's `licence` field in `node modules` or [npm](https://www.npmjs.
 
 - Automatic restart of the server during development
 
+Automated tests include coverage for admin-only functionality.
+Test seeding is used to create admin, host, and user accounts to accurately reflect real-world scenarios.
+
+---
+
 ## Environment Configuration
 
 This applicaton uses separate environments to prevent test and development data conflicts. This matches real-world deployment practices and ensures safe, repeatable testing.
@@ -198,6 +204,8 @@ JWT_EXPIRES_IN=1d
 
 ### Authorisation
 
+Role-based access control (RBAC) is enforced across the application to ensure users may only perform actions permitted based on their assigned role.
+
 **Spaces and Events**
 
 - **Create/Update/Delete** -> Requires `host` role
@@ -211,11 +219,16 @@ JWT_EXPIRES_IN=1d
   - Hosts can view bookings for their hosted events/spaces (`scope=host`)
 - **Update** ->
   - Users can update their own bookings (all fields)
-  - Hosts can only update `paymentstatus` for bookings on their events/spaces
-- **Delete** -> Users can delete their own bookings; hosts can delete bookings on their events/spaces
+  - Hosts can update limited fields e.g. `paymentstatus` for bookings related to their events/spaces
+- **Delete** ->
+  - Users can delete their own bookings
+  - Hosts can delete bookings related to their events/spaces
 
-**Note regarding Admin/Developer Role (Planned):**
-During the plannning of the development of Your Place, we designed the system to support a potential admin role for development or administrative purposes. This role would have unrestricted access to all resources (spaces, events, bookings, and users) for testing, debugging, and administrative management. Due to time constraints, full admin functionality was not fully implemented, but the architecture supports its integration, and role-based access control is designed to allow seamless addition of an admin role in future iterations.
+**Admin Role**
+
+- Admin users have unrestricted access to all resources on the application
+- Admins can update another user's role
+- Admin-only functionality, such as role updates (e.g. user to host) are protected and enforced by JWT authentication, role-based middleware checks, and Zod request validation
 
 ---
 
@@ -235,9 +248,9 @@ This projects follows the **Airbnb JavaScript Style Guide**, enforced using **ES
 
 ### Why?
 
-- Widely adopted in the industry
+- Widely adopted in the industry and suitable for collaborative backend development
 - Promotes readable, maintainable, and predictable code
-- Encourages best practices including: Consistent naming, clear control flow, explicit error handling, and avoidance of ambiguous JavaScript patterns
+- Encourages best practices including: Consistent naming, predictable control flow across the codebase, explicit error handling, and avoidance of ambiguous JavaScript patterns
 
 ### Tooling
 

@@ -19,6 +19,18 @@ app.use(express.json())
 
 app.get('/health', (req, res) => res.json({ ok: true }))
 
+app.get('/', (req, res) => {
+  res.json({
+    message: 'Welcome to Your Place!',
+    endpoints: {
+      health: '/health',
+      auth: '/auth',
+      bookings: '/bookings',
+      spaces: '/spaces',
+      events: '/events',
+    },
+  })
+})
 app.use('/auth', authRoutes)
 app.use('/users', usersRoutes)
 app.use('/bookings', bookingsRoutes)
