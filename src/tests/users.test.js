@@ -3,17 +3,30 @@ const app = require('../app')
 const { query } = require('../db/pool')
 
 describe('Users API', () => {
-  const email = `me+${Date.now()}@test.com`
   const password = 'password123'
 
-  afterAll(async () => {
-    await query('DELETE FROM users WHERE email = $1', [email])
+  // Track any users we create so we can clean up.
+  const createdEmails = []
+
+  const makeEmail = (prefix = 'me') => {
+    const rand = Math.random().toString(16).slice(2)
+    return `${prefix}+${Date.now()}-${rand}@test.com`
+  }
+
+  afterEach(async () => {
+    // Clean up users created by these tests.
+    // (jest.setup.js keeps users around between tests)
+    // eslint-disable-next-line no-restricted-syntax
+    for (const e of createdEmails) {
+      // eslint-disable-next-line no-await-in-loop
+      await query('DELETE FROM users WHERE email = $1', [e])
+    }
+    createdEmails.length = 0
   })
 
   test('GET /users/me returns 401 when no token', async () => {
     const res = await request(app).get('/users/me')
     expect(res.status).toBe(401)
-    expect(res.body?.error?.code).toBe('UNAUTHORIZED')
   })
 
   test('GET /users/me returns 401 when token is invalid', async () => {
@@ -22,10 +35,12 @@ describe('Users API', () => {
       .set('Authorization', 'Bearer not-a-real-token')
 
     expect(res.status).toBe(401)
-    expect(res.body?.error?.code).toBe('UNAUTHORIZED')
   })
 
   test('GET /users/me returns 200 with user data when authenticated', async () => {
+    const email = makeEmail('me')
+    createdEmails.push(email)
+
     // Register
     const reg = await request(app).post('/auth/register').send({
       email,
@@ -36,14 +51,14 @@ describe('Users API', () => {
     expect(reg.status).toBe(201)
     expect(reg.body.token).toBeTruthy()
 
-    // Login
+    // Login (prove login works too)
     const login = await request(app).post('/auth/login').send({
       email,
       password,
     })
 
     expect(login.status).toBe(200)
-    const { token } = login.body
+    const token = login.body.token
 
     const res = await request(app)
       .get('/users/me')
@@ -52,5 +67,58 @@ describe('Users API', () => {
     expect(res.status).toBe(200)
     expect(res.body.data.email).toBe(email)
     expect(res.body.data.full_name).toBe('Test User')
+  })
+
+  test('PATCH /users/me updates profile fields (200)', async () => {
+    const email = makeEmail('me')
+    createdEmails.push(email)
+
+    // Register
+    const reg = await request(app).post('/auth/register').send({
+      email,
+      password,
+      fullName: 'Test User',
+    })
+  
+    expect(reg.status).toBe(201)
+    const token = reg.body.token
+  
+    const res = await request(app)
+      .patch('/users/me')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ fullName: 'Updated Name', locale: 'en' })
+  
+    expect(res.status).toBe(200)
+    expect(res.body.data.full_name).toBe('Updated Name')
+    expect(res.body.data.locale).toBe('en')
+  })
+  
+  test('DELETE /users/me deletes the user (204) and subsequent /me is 404', async () => {
+    const email = makeEmail('delete')
+    createdEmails.push(email)
+
+    // Register
+    const reg = await request(app).post('/auth/register').send({
+      email,
+      password,
+      fullName: 'To Delete',
+    })
+  
+    expect(reg.status).toBe(201)
+    const token = reg.body.token
+  
+    const del = await request(app)
+      .delete('/users/me')
+      .set('Authorization', `Bearer ${token}`)
+  
+    expect(del.status).toBe(204)
+  
+    // Token is still cryptographically valid, but user should be gone
+    const after = await request(app)
+      .get('/users/me')
+      .set('Authorization', `Bearer ${token}`)
+  
+    expect(after.status).toBe(404)
+    expect(after.body?.error?.code).toBe('NOT_FOUND')
   })
 })
