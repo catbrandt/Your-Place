@@ -1,21 +1,21 @@
-const { query } = require('../db/pool')
+const { query } = require('../db/pool');
 
 async function listEvents(filters = {}) {
-  const where = []
-  const values = []
-  let i = 1
+  const where = [];
+  const values = [];
+  let i = 1;
 
   if (filters.city) {
-    where.push(`s.city ILIKE $${i++}`)
-    values.push(`%${filters.city}%`)
+    where.push(`s.city ILIKE $${i++}`);
+    values.push(`%${filters.city}%`);
   }
   if (filters.category) {
-    where.push(`e.category ILIKE $${i++}`)
-    values.push(`%${filters.category}%`)
+    where.push(`e.category ILIKE $${i++}`);
+    values.push(`%${filters.category}%`);
   }
   if (filters.status) {
-    where.push(`e.status = $${i++}`)
-    values.push(filters.status)
+    where.push(`e.status = $${i++}`);
+    values.push(filters.status);
   }
 
   const sql = `
@@ -29,10 +29,10 @@ async function listEvents(filters = {}) {
     JOIN spaces s ON s.id = e.space_id
     ${where.length ? `WHERE ${where.join(' AND ')}` : ''}
     ORDER BY e.id DESC
-  `
+  `;
 
-  const { rows } = await query(sql, values)
-  return rows
+  const { rows } = await query(sql, values);
+  return rows;
 }
 
 async function getEventById(eventId) {
@@ -42,8 +42,8 @@ async function getEventById(eventId) {
      FROM events
      WHERE id = $1`,
     [eventId]
-  )
-  return rows[0] || null
+  );
+  return rows[0] || null;
 }
 
 async function createEvent(hostUserId, payload) {
@@ -57,7 +57,7 @@ async function createEvent(hostUserId, payload) {
     capacity,
     price_per_spot,
     status,
-  } = payload
+  } = payload;
 
   const { rows } = await query(
     `INSERT INTO events (
@@ -78,22 +78,22 @@ async function createEvent(hostUserId, payload) {
       price_per_spot,
       status ?? 'draft',
     ]
-  )
+  );
 
-  return rows[0]
+  return rows[0];
 }
 
 async function updateEvent(eventId, payload) {
-  const fields = []
-  const values = []
-  let i = 1
+  const fields = [];
+  const values = [];
+  let i = 1;
 
   for (const [key, val] of Object.entries(payload)) {
-    fields.push(`${key} = $${i++}`)
-    values.push(val)
+    fields.push(`${key} = $${i++}`);
+    values.push(val);
   }
 
-  values.push(eventId)
+  values.push(eventId);
 
   const { rows } = await query(
     `UPDATE events
@@ -102,13 +102,13 @@ async function updateEvent(eventId, payload) {
      RETURNING id, host_user_id, space_id, title, description, category,
                start_at, end_at, capacity, price_per_spot, status, created_at, updated_at`,
     values
-  )
+  );
 
-  return rows[0]
+  return rows[0];
 }
 
 async function deleteEvent(eventId) {
-  await query(`DELETE FROM events WHERE id = $1`, [eventId])
+  await query(`DELETE FROM events WHERE id = $1`, [eventId]);
 }
 
-module.exports = { listEvents, getEventById, createEvent, updateEvent, deleteEvent }
+module.exports = { listEvents, getEventById, createEvent, updateEvent, deleteEvent };

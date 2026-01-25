@@ -1,4 +1,4 @@
-const { z } = require('zod')
+const { z } = require('zod');
 
 // Only allow updating profile-style fields (not email/role/password here)
 const updateMeSchema = z
@@ -8,18 +8,18 @@ const updateMeSchema = z
   })
   .refine((obj) => Object.keys(obj).length > 0, {
     message: 'At least one field must be provided',
-  })
+  });
 
 const idParamSchema = z.object({
   id: z.coerce.number().int().positive(),
-})
+});
 
 const updateUserRoleSchema = z.object({
   role: z.enum(['user', 'host', 'admin']),
-})
+});
 
 module.exports = {
   updateMeSchema,
   idParamSchema,
   updateUserRoleSchema,
-}
+};

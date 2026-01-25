@@ -232,7 +232,6 @@ Role-based access control (RBAC) is enforced across the application to ensure us
 - Intended strictly for role management (e.g. promoting a user to host)
 - They do not manage content directly
 
-
 > Admin users do **not** automatically have permission to manage spaces, events, or bookings unless they also hold the relevant role.
 
 **User Roles & Promotion**
@@ -356,11 +355,11 @@ This will create (or update) the following users:
 
 - Admin  
   Email: admin@yourplace.dev  
-  Password: password123  
+  Password: password123
 
 - Host  
   Email: host@yourplace.dev  
-  Password: password123  
+  Password: password123
 
 ⚠️ This script is protected against running in production.
 

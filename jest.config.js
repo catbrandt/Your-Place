@@ -3,4 +3,4 @@ module.exports = {
   testMatch: ['**/src/tests/**/*.test.js'],
   setupFilesAfterEnv: ['<rootDir>/src/tests/jest.setup.js'],
   maxWorkers: 1,
-}
+};

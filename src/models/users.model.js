@@ -1,4 +1,4 @@
-const { query } = require('../db/pool')
+const { query } = require('../db/pool');
 
 /**
  * Find a user by email
@@ -9,9 +9,9 @@ async function findUserByEmail(email) {
   const { rows } = await query(
     'SELECT id, email, password_hash, role FROM users WHERE email = $1',
     [email]
-  )
+  );
 
-  return rows[0] || null
+  return rows[0] || null;
 }
 
 /**
@@ -23,9 +23,9 @@ async function findUserById(id) {
   const { rows } = await query(
     'SELECT id, full_name, email, role, locale FROM users WHERE id = $1',
     [id]
-  )
+  );
 
-  return rows[0] || null
+  return rows[0] || null;
 }
 
 /**
@@ -45,8 +45,8 @@ async function createUser({ email, passwordHash, role, fullName = null }) {
     RETURNING id, full_name, email, role
     `,
     [fullName, email, passwordHash, role]
-  )
-  return rows[0]
+  );
+  return rows[0];
 }
 
 /**
@@ -55,25 +55,25 @@ async function createUser({ email, passwordHash, role, fullName = null }) {
  * Returns the updated user row or null if no fields were provided.
  */
 async function updateUserById(id, { fullName, locale }) {
-  const sets = []
-  const values = []
-  let i = 1
+  const sets = [];
+  const values = [];
+  let i = 1;
 
   // Only add fields that were actually provided
   if (fullName !== undefined) {
-    sets.push(`full_name = $${i++}`)
-    values.push(fullName)
+    sets.push(`full_name = $${i++}`);
+    values.push(fullName);
   }
 
   if (locale !== undefined) {
-    sets.push(`locale = $${i++}`)
-    values.push(locale)
+    sets.push(`locale = $${i++}`);
+    values.push(locale);
   }
 
   // Nothing to update
-  if (sets.length === 0) return null
+  if (sets.length === 0) return null;
 
-  values.push(id)
+  values.push(id);
 
   const { rows } = await query(
     `UPDATE users
@@ -81,9 +81,9 @@ async function updateUserById(id, { fullName, locale }) {
      WHERE id = $${i}
      RETURNING id, full_name, email, role, locale`,
     values
-  )
+  );
 
-  return rows[0] || null
+  return rows[0] || null;
 }
 
 /**
@@ -91,8 +91,8 @@ async function updateUserById(id, { fullName, locale }) {
  * Returns { id } if deleted, otherwise null.
  */
 async function deleteUserById(id) {
-  const { rows } = await query('DELETE FROM users WHERE id = $1 RETURNING id', [id])
-  return rows[0] || null
+  const { rows } = await query('DELETE FROM users WHERE id = $1 RETURNING id', [id]);
+  return rows[0] || null;
 }
 
 /**
@@ -108,8 +108,8 @@ async function updateUserRoleById(id, role) {
      WHERE id = $2
      RETURNING id, full_name, email, role, locale`,
     [role, id]
-  )
-  return rows[0] || null
+  );
+  return rows[0] || null;
 }
 
 module.exports = {
@@ -119,4 +119,4 @@ module.exports = {
   updateUserById,
   deleteUserById,
   updateUserRoleById,
-}
+};

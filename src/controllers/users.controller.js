@@ -3,24 +3,24 @@ const {
   updateUserById,
   deleteUserById,
   updateUserRoleById,
-} = require('../models/users.model')
-const ApiError = require('../utils/ApiError')
+} = require('../models/users.model');
+const ApiError = require('../utils/ApiError');
 
 async function getMe(req, res, next) {
   try {
-    const userId = req.user?.id
+    const userId = req.user?.id;
     if (!userId) {
-      throw new ApiError(401, 'UNAUTHORIZED', 'Not authenticated')
+      throw new ApiError(401, 'UNAUTHORIZED', 'Not authenticated');
     }
 
-    const user = await findUserById(userId)
+    const user = await findUserById(userId);
     if (!user) {
-      throw new ApiError(404, 'NOT_FOUND', 'User not found')
+      throw new ApiError(404, 'NOT_FOUND', 'User not found');
     }
 
-    return res.json({ data: user })
+    return res.json({ data: user });
   } catch (err) {
-    return next(err)
+    return next(err);
   }
 }
 
@@ -30,21 +30,21 @@ async function getMe(req, res, next) {
  */
 async function updateMe(req, res, next) {
   try {
-    const userId = req.user?.id
-    if (!userId) throw new ApiError(401, 'UNAUTHORIZED', 'Not authenticated')
+    const userId = req.user?.id;
+    if (!userId) throw new ApiError(401, 'UNAUTHORIZED', 'Not authenticated');
 
     const updated = await updateUserById(userId, {
       fullName: req.body.fullName,
       locale: req.body.locale,
-    })
+    });
 
     // If updateUserById returns null, either user doesn't exist OR nothing to update.
     // Validation should prevent empty updates, so treat as user not found.
-    if (!updated) throw new ApiError(404, 'NOT_FOUND', 'User not found')
+    if (!updated) throw new ApiError(404, 'NOT_FOUND', 'User not found');
 
-    return res.json({ data: updated })
+    return res.json({ data: updated });
   } catch (err) {
-    return next(err)
+    return next(err);
   }
 }
 
@@ -53,15 +53,15 @@ async function updateMe(req, res, next) {
  */
 async function deleteMe(req, res, next) {
   try {
-    const userId = req.user?.id
-    if (!userId) throw new ApiError(401, 'UNAUTHORIZED', 'Not authenticated')
+    const userId = req.user?.id;
+    if (!userId) throw new ApiError(401, 'UNAUTHORIZED', 'Not authenticated');
 
-    const deleted = await deleteUserById(userId)
-    if (!deleted) throw new ApiError(404, 'NOT_FOUND', 'User not found')
+    const deleted = await deleteUserById(userId);
+    if (!deleted) throw new ApiError(404, 'NOT_FOUND', 'User not found');
 
-    return res.status(204).send()
+    return res.status(204).send();
   } catch (err) {
-    return next(err)
+    return next(err);
   }
 }
 
@@ -71,14 +71,14 @@ async function deleteMe(req, res, next) {
  */
 async function updateUserRole(req, res, next) {
   try {
-    const userId = Number(req.params.id)
+    const userId = Number(req.params.id);
 
-    const updated = await updateUserRoleById(userId, req.body.role)
-    if (!updated) throw new ApiError(404, 'NOT_FOUND', 'User not found')
+    const updated = await updateUserRoleById(userId, req.body.role);
+    if (!updated) throw new ApiError(404, 'NOT_FOUND', 'User not found');
 
-    return res.json({ data: updated })
+    return res.json({ data: updated });
   } catch (err) {
-    return next(err)
+    return next(err);
   }
 }
 
@@ -87,4 +87,4 @@ module.exports = {
   updateMe,
   deleteMe,
   updateUserRole,
-}
+};

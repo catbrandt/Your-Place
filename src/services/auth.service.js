@@ -1,5 +1,5 @@
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 /**
  * Hash a plain text password
@@ -7,8 +7,8 @@ const jwt = require('jsonwebtoken')
  * @returns {Promise<string>}
  */
 async function hashPassword(password) {
-  const saltRounds = 10
-  return bcrypt.hash(password, saltRounds)
+  const saltRounds = 10;
+  return bcrypt.hash(password, saltRounds);
 }
 
 /**
@@ -18,7 +18,7 @@ async function hashPassword(password) {
  * @returns {Promise<boolean>}
  */
 async function verifyPassword(password, hash) {
-  return bcrypt.compare(password, hash)
+  return bcrypt.compare(password, hash);
 }
 
 /**
@@ -29,11 +29,11 @@ async function verifyPassword(password, hash) {
  * @returns {string}
  */
 function createToken({ id, role }) {
-  return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN })
+  return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
 }
 
 module.exports = {
   hashPassword,
   verifyPassword,
   createToken,
-}
+};

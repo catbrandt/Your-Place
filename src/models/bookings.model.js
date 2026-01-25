@@ -1,4 +1,4 @@
-const { query } = require('../db/pool')
+const { query } = require('../db/pool');
 
 /**
  * Create a new booking for an event/space
@@ -13,7 +13,7 @@ const { query } = require('../db/pool')
 const createBooking = async (eventId, spaceId, userId, quantity, totalPrice, paymentStatus) => {
   // Validates that eventId OR spaceId is provided (cannot be both)
   if ((!eventId && !spaceId) || (eventId && spaceId)) {
-    throw new Error('Must provide either eventId OR spaceId (not both)')
+    throw new Error('Must provide either eventId OR spaceId (not both)');
   }
 
   const result = await query(
@@ -21,18 +21,18 @@ const createBooking = async (eventId, spaceId, userId, quantity, totalPrice, pay
      VALUES ($1, $2, $3, $4, $5, $6) 
      RETURNING *`,
     [eventId, spaceId, userId, quantity, totalPrice, paymentStatus || 'pending']
-  )
-  return result.rows[0]
-}
+  );
+  return result.rows[0];
+};
 
 /**
  * Get all bookings from database
  * @returns Array of all bookings by ID
  */
 const getAllBookings = async () => {
-  const result = await query('SELECT * FROM bookings ORDER BY id')
-  return result.rows
-}
+  const result = await query('SELECT * FROM bookings ORDER BY id');
+  return result.rows;
+};
 
 async function getBookingsForUser(userId) {
   const result = await query(
@@ -41,8 +41,8 @@ async function getBookingsForUser(userId) {
      WHERE user_id = $1
      ORDER BY created_at DESC`,
     [userId]
-  )
-  return result.rows
+  );
+  return result.rows;
 }
 
 async function getBookingsForHost(hostUserId) {
@@ -54,8 +54,8 @@ async function getBookingsForHost(hostUserId) {
      WHERE (e.host_user_id = $1) OR (s.host_user_id = $1)
      ORDER BY b.created_at DESC`,
     [hostUserId]
-  )
-  return result.rows
+  );
+  return result.rows;
 }
 
 async function hostOwnsBooking(hostUserId, bookingId) {
@@ -68,8 +68,8 @@ async function hostOwnsBooking(hostUserId, bookingId) {
        AND ((e.host_user_id = $1) OR (s.host_user_id = $1))
      LIMIT 1`,
     [hostUserId, bookingId]
-  )
-  return result.rows.length > 0
+  );
+  return result.rows.length > 0;
 }
 
 /**
@@ -78,9 +78,9 @@ async function hostOwnsBooking(hostUserId, bookingId) {
  * @returns {object} the booking object, undefined if none found
  */
 const getBookingById = async (id) => {
-  const result = await query('SELECT * FROM bookings WHERE id = $1', [id])
-  return result.rows[0]
-}
+  const result = await query('SELECT * FROM bookings WHERE id = $1', [id]);
+  return result.rows[0];
+};
 
 /**
  * Get all bookings for a user with event/space details
@@ -103,9 +103,9 @@ const getBookingsByUserId = async (userId) => {
         WHERE b.user_id = $1 
         ORDER BY COALESCE(e.start_at, b.id) DESC`,
     [userId]
-  )
-  return result.rows
-}
+  );
+  return result.rows;
+};
 
 /**
  * Get all bookings for an event with user details
@@ -120,9 +120,9 @@ const getBookingsByEventId = async (eventId) => {
         WHERE b.event_id = $1
         ORDER BY b.id`,
     [eventId]
-  )
-  return result.rows
-}
+  );
+  return result.rows;
+};
 
 /**
  * Get all bookings for a space with user details.
@@ -138,9 +138,9 @@ const getBookingsBySpaceId = async (spaceId) => {
         WHERE b.space_id = $1
         ORDER BY b.id`,
     [spaceId]
-  )
-  return result.rows
-}
+  );
+  return result.rows;
+};
 
 /**
  * Update an existing booking
@@ -155,9 +155,9 @@ const updateBooking = async (id, quantity, totalPrice, paymentStatus) => {
         WHERE id = $4
         RETURNING *`,
     [quantity, totalPrice, paymentStatus, id]
-  )
-  return result.rows[0]
-}
+  );
+  return result.rows[0];
+};
 
 /**
  * Delete a booking from database
@@ -170,9 +170,9 @@ const deleteBooking = async (id) => {
         WHERE id = $1
         RETURNING *`,
     [id]
-  )
-  return result.rows[0]
-}
+  );
+  return result.rows[0];
+};
 
 module.exports = {
   createBooking,
@@ -186,4 +186,4 @@ module.exports = {
   hostOwnsBooking,
   updateBooking,
   deleteBooking,
-}
+};
