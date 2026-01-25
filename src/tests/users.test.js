@@ -1,6 +1,7 @@
 const request = require('supertest')
 const app = require('../app')
 const { query } = require('../db/pool')
+const { createToken } = require('../services/auth.service')
 
 describe('Users API', () => {
   const password = 'password123'
@@ -120,5 +121,66 @@ describe('Users API', () => {
   
     expect(after.status).toBe(404)
     expect(after.body?.error?.code).toBe('NOT_FOUND')
+  })
+
+  test('PATCH /users/:id/role returns 401 when no token', async () => {
+    const res = await request(app).patch('/users/1/role').send({ role: 'host' })
+    expect(res.status).toBe(401)
+  })
+  
+  test('PATCH /users/:id/role returns 403 when not admin', async () => {
+    const email = makeEmail('notadmin')
+    createdEmails.push(email)
+  
+    const reg = await request(app).post('/auth/register').send({
+      email,
+      password,
+      fullName: 'Not Admin',
+    })
+  
+    expect(reg.status).toBe(201)
+  
+    const res = await request(app)
+      .patch('/users/1/role')
+      .set('Authorization', `Bearer ${reg.body.token}`)
+      .send({ role: 'host' })
+  
+    expect(res.status).toBe(403)
+    expect(res.body?.error?.code).toBe('FORBIDDEN')
+  })
+  
+  test('PATCH /users/:id/role updates role when admin (200)', async () => {
+    const email = makeEmail('promote')
+    createdEmails.push(email)
+  
+    const reg = await request(app).post('/auth/register').send({
+      email,
+      password,
+      fullName: 'To Promote',
+    })
+  
+    expect(reg.status).toBe(201)
+  
+    // Admin is seeded in jest.setup.js as user id=3
+    const adminToken = createToken({ id: 3, role: 'admin' })
+  
+    const promote = await request(app)
+      .patch(`/users/${reg.body.user.id}/role`)
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ role: 'host' })
+  
+    expect(promote.status).toBe(200)
+    expect(promote.body.data.role).toBe('host')
+  
+    // confirm user logs in and sees host role
+    const login = await request(app).post('/auth/login').send({ email, password })
+    expect(login.status).toBe(200)
+  
+    const me = await request(app)
+      .get('/users/me')
+      .set('Authorization', `Bearer ${login.body.token}`)
+  
+    expect(me.status).toBe(200)
+    expect(me.body.data.role).toBe('host')
   })
 })
