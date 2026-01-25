@@ -230,8 +230,6 @@ Role-based access control (RBAC) is enforced across the application to ensure us
 - Admins can update another user's role
 - Admin-only functionality, such as role updates (e.g. user to host) are protected and enforced by JWT authentication, role-based middleware checks, and Zod request validation
 
-### Admin Role
-
 ---
 
 ## Error Handling
