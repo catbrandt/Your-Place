@@ -15,11 +15,9 @@ async function getMe(req, res, next) {
 
     return res.json({ data: user })
   } catch (err) {
-    next(err)
+    return next(err)
   }
 }
-
-
 
 module.exports = {
   getMe,

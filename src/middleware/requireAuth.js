@@ -1,22 +1,29 @@
 const jwt = require('jsonwebtoken')
 const ApiError = require('../utils/ApiError')
 
+/**
+ * Require JWT auth header (Authorization: Bearer <token>).
+ * Sets req.user = { id, role } from decoded token.
+ */
 function requireAuth(req, res, next) {
-  const authHeader = req.headers.authorization
+  const auth = req.headers.authorization
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return next(new ApiError(401, 'UNAUTHORIZED', 'Missing or invalid token'))
+  if (!auth || !auth.startsWith('Bearer ')) {
+    return next(
+      new ApiError(401, 'UNAUTHORIZED', 'Missing or invalid Authorization header')
+    )
   }
 
-  const token = authHeader.split(' ')[1]
+  const token = auth.slice(7)
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET)
-    req.user = { id: payload.id, role: payload.role }
-    next()
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    req.user = { id: decoded.id, role: decoded.role }
+    return next()
   } catch (err) {
     return next(new ApiError(401, 'UNAUTHORIZED', 'Invalid or expired token'))
   }
 }
 
 module.exports = requireAuth
+

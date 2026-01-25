@@ -13,12 +13,16 @@ describe('Users API', () => {
   test('GET /users/me returns 401 when no token', async () => {
     const res = await request(app).get('/users/me')
     expect(res.status).toBe(401)
+    expect(res.body?.error?.code).toBe('UNAUTHORIZED')
   })
 
   test('GET /users/me returns 401 when token is invalid', async () => {
-    const res = await request(app).get('/users/me').set('Authorization', 'Bearer not-a-real-token')
+    const res = await request(app)
+      .get('/users/me')
+      .set('Authorization', 'Bearer not-a-real-token')
 
     expect(res.status).toBe(401)
+    expect(res.body?.error?.code).toBe('UNAUTHORIZED')
   })
 
   test('GET /users/me returns 200 with user data when authenticated', async () => {
@@ -32,7 +36,7 @@ describe('Users API', () => {
     expect(reg.status).toBe(201)
     expect(reg.body.token).toBeTruthy()
 
-    // Login (prove login works too)
+    // Login
     const login = await request(app).post('/auth/login').send({
       email,
       password,
@@ -41,7 +45,9 @@ describe('Users API', () => {
     expect(login.status).toBe(200)
     const { token } = login.body
 
-    const res = await request(app).get('/users/me').set('Authorization', `Bearer ${token}`)
+    const res = await request(app)
+      .get('/users/me')
+      .set('Authorization', `Bearer ${token}`)
 
     expect(res.status).toBe(200)
     expect(res.body.data.email).toBe(email)

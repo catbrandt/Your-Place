@@ -2,6 +2,9 @@ const fs = require('fs')
 const path = require('path')
 const { query, pool } = require('../db/pool')
 
+process.env.JWT_SECRET = process.env.JWT_SECRET || 'test_secret'
+process.env.JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h'
+
 /**
  * Jest DB bootstrap
  *
@@ -44,9 +47,11 @@ async function ensureHostUsers() {
      ON CONFLICT (id) DO UPDATE
        SET full_name = EXCLUDED.full_name,
            email = EXCLUDED.email,
-           role = EXCLUDED.role`,
+           role = EXCLUDED.role,
+           locale = EXCLUDED.locale`,
     []
   )
+
   // Ensure the SERIAL sequence is ahead of our fixed ids (1,2)
   await query(
     `SELECT setval(pg_get_serial_sequence('users', 'id'), (SELECT COALESCE(MAX(id), 1) FROM users))`,
@@ -54,15 +59,6 @@ async function ensureHostUsers() {
   )
 }
 
-async function ensureUser2() {
-  // Create user 2 for tests that need a different user
-  await query(
-    `INSERT INTO users (id, email, password_hash, role)
-     VALUES (2, 'test2@example.com', 'dummy_hash', 'host')
-     ON CONFLICT (id) DO UPDATE SET email = EXCLUDED.email, role = EXCLUDED.role`,
-    []
-  );
-}
 beforeAll(async () => {
   await resetAndMigrate()
   await ensureHostUsers()
@@ -79,7 +75,6 @@ beforeEach(async () => {
 })
 
 afterAll(async () => {
-  // Only do this if you are NOT also ending the pool elsewhere (e.g., globalTeardown)
   if (pool && pool.end) {
     await pool.end()
   }
