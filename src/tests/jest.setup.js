@@ -67,6 +67,7 @@ beforeAll(async () => {
 
 beforeEach(async () => {
   // Clean tables between tests. Order matters because of foreign keys.
+  await query('DELETE FROM host_applications', []);
   await query('DELETE FROM bookings', []);
   await query('DELETE FROM events', []);
   await query('DELETE FROM spaces', []);
