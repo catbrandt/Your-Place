@@ -15,7 +15,12 @@ const {
 const router = express.Router();
 
 // User endpoints
-router.post('/', requireAuth, validate(createHostApplicationSchema), controller.createMyApplication);
+router.post(
+  '/',
+  requireAuth,
+  validate(createHostApplicationSchema),
+  controller.createMyApplication
+);
 router.get('/me', requireAuth, controller.getMyApplication);
 
 // Admin endpoints

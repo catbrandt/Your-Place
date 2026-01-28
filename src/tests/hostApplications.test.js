@@ -9,10 +9,6 @@ describe('Host Applications API', () => {
   const makeEmail = (prefix = 'ha') =>
     `${prefix}+${Date.now()}-${Math.random().toString(16).slice(2)}@test.com`;
 
-  const authHeader = (user) => ({
-    Authorization: `Bearer ${createToken(user)}`,
-  });
-
   const createdUserIds = [];
 
   afterEach(async () => {

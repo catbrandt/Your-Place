@@ -2,7 +2,7 @@ const { z } = require('zod');
 const ApiError = require('../utils/ApiError');
 const model = require('../models/hostApplications.model');
 const { pool } = require('../db/pool');
-const { updateUserRoleById, findUserById } = require('../models/users.model');
+const { findUserById } = require('../models/users.model');
 
 // Params
 const idParamSchema = z.object({
